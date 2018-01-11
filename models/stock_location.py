@@ -14,7 +14,6 @@ class StockLocation(models.Model):
 
     u_blocked_reason = fields.Char(string='Reason for Block:', required=False)
 
-    @api.multi
     def check_blocked(self, prefix=''):
         """ Checks if any of the locations in self are blocked.
 
@@ -68,3 +67,16 @@ class StockLocation(models.Model):
                     raise ValidationError(
                             _('Location cannot be blocked because '
                               'it contains reserved stock.'))
+
+    def _prepare_info(self, extended=False, **kwargs):
+        """
+            Prepares the following extra info of the location in self:
+            - u_blocked: boolean
+            - u_blocked_reason: string
+        """
+        info = super(StockLocation, self)._prepare_info(**kwargs)
+        if extended:
+            info['u_blocked'] = self.u_blocked
+            info['u_blocked_reason'] = self.u_blocked_reason
+
+        return info
