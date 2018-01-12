@@ -70,7 +70,8 @@ class StockLocation(models.Model):
 
     def _prepare_info(self, extended=False, **kwargs):
         """
-            Prepares the following extra info of the location in self:
+            Prepares the following extra info of the location in self
+            when extended paramameter is True:
             - u_blocked: boolean
             - u_blocked_reason: string
         """
