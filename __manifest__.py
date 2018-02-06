@@ -14,7 +14,7 @@ Handling of blocked locations.
     'category': 'Warehouse Management',
     'version': '0.1',
     #'license': 'LGPL-3',
-    'depends': ['base', 'stock', 'udes_core'],
+    'depends': ['base', 'stock'],
     'data': [
         'views/stock_location.xml',
     ],
