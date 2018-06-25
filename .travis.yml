@@ -1,0 +1,10 @@
+sudo: required
+
+services:
+  - docker
+
+before_install:
+  - docker build -t odoo-blocked-locations-tester .
+
+script:
+  - docker run -i -t --rm odoo-blocked-locations-tester
