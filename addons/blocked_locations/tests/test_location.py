@@ -99,3 +99,18 @@ class TestStockLocation(BaseBlocked):
 
         self.assertEqual(e.exception.name,
                 'Location cannot be blocked because it contains reserved stock.')
+
+    def test09_onchange_blocked_to_stay_true(self):
+        """ Check that blocked reason stays unchanged the
+            location is simulated as changing from blocked to blocked
+        """
+        self.test_location_01.u_blocked = True
+        self.test_location_01.u_blocked_reason = 'stock damaged'
+        msg = self.test_location_01._prepare_blocked_msg()
+        self.assertEqual(msg[0],
+                         'Location %s is blocked (reason: stock damaged).' %
+                         self.test_location_01.name)
+
+        # simulate the triggering of the onchange, while remaining True
+        self.test_location_01.onchange_u_blocked()
+        self.assertEqual(self.test_location_01.u_blocked_reason,'stock damaged')
