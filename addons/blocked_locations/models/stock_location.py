@@ -52,6 +52,14 @@ class StockLocation(models.Model):
             self.u_blocked_reason = ''
 
     @api.constrains('u_blocked')
+    def constrain_u_blocked(self):
+        """Prevent location being unblocked by means other than view
+        """
+        if not self.u_blocked and self.u_blocked_reason:
+            raise ValidationError("Invalid blocking/blocked reason state,"
+            " blocking should only be changed by view")
+
+    @api.constrains('u_blocked')
     def _check_reserved_quants(self):
         """ Check if there is any stock.quant already reserved
             for the locations trying to be blocked
