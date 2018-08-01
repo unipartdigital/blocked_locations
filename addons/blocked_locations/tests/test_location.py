@@ -26,11 +26,6 @@ class TestStockLocation(BaseBlocked):
         with self.assertRaises(ValidationError) as e:
             self.test_location_01.check_blocked()
 
-        self.assertEqual(e.exception.name,
-                ' Location %s is blocked (reason: no reason specified).'
-                ' Please speak to a team leader to resolve the issue.' %
-                self.test_location_01.name) 
-
     def test03_check_blocked_two_locations_one_blocked_location(self):
         """ Block test_location_01 and check if either test_location_01
             or test_location_02 are blocked, which will raise a
@@ -40,11 +35,6 @@ class TestStockLocation(BaseBlocked):
 
         with self.assertRaises(ValidationError) as e:
             self.test_locations.check_blocked()
-
-        self.assertEqual(e.exception.name,
-                ' Location %s is blocked (reason: no reason specified).'
-                ' Please speak to a team leader to resolve the issue.' %
-                self.test_location_01.name) 
 
     def test04_prepare_blocked_msg_blocked_location_no_reason(self):
         """ Prepare the message of a blocked location without reason.
@@ -83,7 +73,9 @@ class TestStockLocation(BaseBlocked):
                          'Location %s is blocked (reason: stock damaged).' %
                          self.test_location_01.name)
 
-        self.test_location_01.u_blocked = False
+        with self.assertRaises(ValidationError):
+            self.test_location_01.u_blocked = False
+
         # simulate the triggering of the onchange
         self.test_location_01.onchange_u_blocked()
         self.assertEqual(self.test_location_01.u_blocked_reason,'')
@@ -99,3 +91,33 @@ class TestStockLocation(BaseBlocked):
 
         self.assertEqual(e.exception.name,
                 'Location cannot be blocked because it contains reserved stock.')
+
+    def test09_onchange_blocked_to_stay_true(self):
+        """ Check that blocked reason stays unchanged the
+            location is simulated as changing from blocked to blocked
+        """
+        self.test_location_01.u_blocked = True
+        self.test_location_01.u_blocked_reason = 'stock damaged'
+        msg = self.test_location_01._prepare_blocked_msg()
+        self.assertEqual(msg[0],
+                         'Location %s is blocked (reason: stock damaged).' %
+                         self.test_location_01.name)
+
+        # simulate the triggering of the onchange, while remaining True
+        self.test_location_01.onchange_u_blocked()
+        self.assertEqual(self.test_location_01.u_blocked_reason,'stock damaged')
+
+    def test10_constrains_blocked(self):
+        """ Check that a bad combination of blocked state and reason not possible
+        """
+        self.test_location_01.u_blocked = True
+        self.test_location_01.u_blocked_reason = 'stock damaged'
+        msg = self.test_location_01._prepare_blocked_msg()
+        self.assertEqual(msg[0],
+                         'Location %s is blocked (reason: stock damaged).' %
+                         self.test_location_01.name)
+
+        # simulate the triggering of the changing blocked to unblocked, 
+        # while not omitting reason 
+        with self.assertRaises(ValidationError) as e:
+            self.test_location_01.u_blocked = False
