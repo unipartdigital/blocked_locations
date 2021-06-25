@@ -12,7 +12,7 @@ Handling of blocked locations.
     """,
     'author': 'Unipart Digital',
     'category': 'Warehouse Management',
-    'version': '0.1',
+    'version': '0.3',
     #'license': 'LGPL-3',
     'depends': ['base', 'stock'],
     'data': [

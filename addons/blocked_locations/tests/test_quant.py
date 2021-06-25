@@ -14,6 +14,7 @@ class TestStockQuant(BaseBlocked):
             an empty recordset.
         """
         Quant = self.env['stock.quant']
+        self.test_location_01.u_blocked_reason = "Stock Damaged"
         self.test_location_01.u_blocked = True
         quants = Quant._gather(self.apple, self.test_location_01)
         self.assertEqual(len(quants), 0)
@@ -31,6 +32,7 @@ class TestStockQuant(BaseBlocked):
             should return an empty recordset.
         """
         Quant = self.env['stock.quant']
+        self.test_location_01.u_blocked_reason = "Stock Damaged"
         self.test_location_01.u_blocked = True
         quants = Quant._gather(self.apple, self.stock_location)
         self.assertEqual(len(quants), 0)
@@ -41,6 +43,7 @@ class TestStockQuant(BaseBlocked):
             blocked location.
         """
         Quant = self.env['stock.quant']
+        self.test_location_01.u_blocked_reason = "Stock Damaged"
         self.test_location_01.u_blocked = True
         self.create_quant(self.apple.id, self.test_location_02.id, 10)
         quants = Quant._gather(self.apple, self.stock_location)
